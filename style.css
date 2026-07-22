@@ -1,0 +1,370 @@
+:root {
+    --background-color: #1e1e24;
+    --base-color-chroma: #ff00ff;
+    /* Chroma key color for transparent areas */
+    --base-color-gradient: linear-gradient(135deg, #1e1e24 0%, #0f0f12 100%);
+    --overlay-background: linear-gradient(135deg, #1e1e24 0%, #0f0f12 100%);
+    --border-color-game-feed: #ffbb00;
+    --border-color-cam: #0ebe3a;
+    --border-color-chat: #0ebe3a;
+    --border-color-bottom-info: #3a3a4b;
+    --border-color-bottom-timer: #ffbb00;
+    --border-color-bottom-logo: #3a3a4b;
+    --label-color-rerun: #ffbb00;
+    --label-color-chat: #0ebe3a;
+    --label-color-cam: #0ebe3a;
+    --label-text-color: #ffffff;
+    --game-title-color: #ffbb00;
+    --game-comments-color: #a0a0b0;
+    --game-comments-highlight-color: #ffffff;
+    --timer-color: #ffbb00;
+    --timer-title-color: #707080;
+    --timer-estimate-color: #707080;
+    --border-faint: rgba(255, 255, 255, 0.08);
+    --body-color: #ffffff;
+}
+
+/* Reset and Base Canvas Setup */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 1920px;
+    height: 1080px;
+    background-color: transparent;
+    font-family: 'Gotham', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--body-color);
+    overflow: hidden;
+    zoom: 100%;
+}
+
+.overlay-container {
+    display: grid;
+    width: 1920px;
+    height: 1080px;
+    grid-template-columns: 1420px 460px;
+    --sidebar-top-height: 259px;
+    --sidebar-bottom-height: 531px;
+    grid-template-rows: var(--sidebar-top-height) var(--sidebar-bottom-height) 240px;
+    grid-template-areas:
+        "game sidebar-cam"
+        "game sidebar-chat"
+        "bottom-bar bottom-bar";
+    gap: 10px;
+    padding: 15px;
+    background: var(--overlay-background);
+}
+
+.overlay-container.swap-camera-chat {
+    grid-template-areas:
+        "game sidebar-chat"
+        "game sidebar-cam"
+        "bottom-bar bottom-bar";
+    --sidebar-top-height: 531px;
+    --sidebar-bottom-height: 259px;
+}
+
+.overlay-container.single-camera .sidebar-chat {
+    display: none;
+}
+
+.overlay-container.single-camera {
+    grid-template-columns: 1420px 460px;
+    grid-template-areas:
+        "game sidebar-cam"
+        "game sidebar-cam"
+        "bottom-bar bottom-bar";
+    --sidebar-top-height: 790px;
+    --sidebar-bottom-height: 0px;
+}
+
+.overlay-container.single-chat .sidebar-camera {
+    display: none;
+}
+
+.overlay-container.single-chat {
+    grid-template-columns: 1420px 460px;
+    grid-template-areas:
+        "game sidebar-chat"
+        "game sidebar-chat"
+        "bottom-bar bottom-bar";
+    --sidebar-top-height: 790px;
+    --sidebar-bottom-height: 0px;
+}
+
+/* Common Box Styling */
+.module {
+    background-color: var(--background-color);
+    border-radius: 6px;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.game-feed {
+    grid-area: game;
+    background-color: var(--base-color-chroma);
+    border: 3px solid var(--border-color-game-feed);
+}
+
+.sidebar-camera {
+    grid-area: sidebar-cam;
+    background-color: var(--base-color-chroma);
+    border: 3px solid var(--border-color-cam);
+}
+
+.sidebar-camera[hidden],
+.sidebar-chat[hidden] {
+    display: none;
+}
+
+.info-block {
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+    align-items: flex-start;
+    padding-left: 30px;
+    background: linear-gradient(180deg, #252530 0%, #15151c 100%);
+    border: 3px solid var(--border-color-bottom-info);
+}
+
+.info-block::before,
+.info-block::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.info-block::before {
+    background: var(--info-bg-image, url('info-banners/2.jpg')) center/cover no-repeat;
+    opacity: var(--info-bg-opacity, 0.45);
+}
+.info-block.hide-bg::before {
+    display: none;
+}
+
+.info-block::after {
+    background: linear-gradient(to right, rgba(30, 30, 36, 1) 0%, rgba(30, 30, 36, 0) 77%);
+}
+
+.info-block>* {
+    position: relative;
+    z-index: 1;
+}
+
+.sidebar-chat {
+
+    grid-area: sidebar-chat;
+    background: transparent;
+    border: 3px solid var(--border-color-chat);
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 45px 15px 15px 15px;
+    overflow-y: hidden;
+}
+
+.rerun-label,
+.cam-label,
+.chat-label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 3px 10px;
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 3px;
+}
+
+.rerun-label {
+    background: var(--label-color-rerun);
+    color: var(--label-text-color);
+}
+
+.cam-label {
+    background: var(--label-color-cam);
+    color: var(--label-text-color);
+}
+
+.chat-label {
+    background: var(--label-color-chat);
+    color: var(--label-text-color);
+}
+
+
+.bottom-bar {
+    grid-area: bottom-bar;
+    display: grid;
+    grid-template-columns: 950px 460px 460px;
+    gap: 10px;
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+
+.info-block {
+    align-items: flex-start;
+    padding-left: 30px;
+    /* Uses dynamic CSS variables for start color, end color, and angle */
+    background: linear-gradient(
+        var(--info-block-angle, 180deg), 
+        var(--info-block-start, #af881c) 0%, 
+        var(--info-block-end, #15151c) 100%
+    );
+    border: 3px solid var(--border-color-bottom-info);
+}
+
+.game-title {
+    font-size: var(--game-title-font-size, 40px);
+    font-weight: 800;
+    color: var(--game-title-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.game-comments,
+.game-meta {
+    font-size: 20px;
+    color: var(--game-comments-color);
+    margin-top: 5px;
+}
+
+.game-comments span,
+.game-meta span {
+    color: var(--game-comments-highlight-color);
+    font-weight: 600;
+}
+
+.timer-block {
+    background-color:rgba(20, 20, 20, 0.3);
+    border: 3px solid var(--border-color-bottom-timer);
+}
+
+.timer-label {
+    font-size: 20px;
+    color: var(--timer-title-color);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.timer-digits {
+    font-size: 54px;
+    font-weight: bold;
+    color: var(--timer-color);
+    text-shadow: 0 0 10px rgba(255, 187, 0, 0.4);
+    font-variant-numeric: tabular-nums;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.timer-estimate,
+.timer-local-time {
+    font-size: 20px;
+    color: var(--timer-estimate-color);
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.timer-local-time {
+    display: flex;
+    gap: 8px;
+}
+
+/* Donation / Incentive Ticker 
+.ticker-block {
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(180deg, #252530 0%, #15151c 100%);
+}
+
+.ticker-title {
+    font-size: 14px;
+    color: #0ebe3a;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.ticker-value {
+    font-size: 36px;
+    font-weight: bold;
+    margin-top: 5px;
+    }
+    */
+
+/*Logo*/
+
+.logo-block {
+    background: transparent;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 3px solid var(--border-color-bottom-logo);
+}
+
+.stream-logo {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    opacity: 0.5;
+    filter: drop-shadow(0 0 8px rgba(0, 255, 204, 0.3));
+}
+
+.chat-messages-holder {
+    display: block;
+    overflow-y: hidden;
+    max-height: calc(100% - 5px);
+}
+
+.chat-disabled-message {
+    display: none;
+    padding: 20px;
+    color: var(--game-comments-color);
+    font-size: 18px;
+    text-align: center;
+}
+
+
+.chat-msg {
+    animation: fadeIn 0.3s ease;
+    line-height: 1.4;
+    border-bottom: 1px solid var(--border-faint);
+    padding: 6px 12px;
+    width: 100%;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    display: block;
+    flex-shrink: 0;
+}
+
+.chat-msg-user {
+    color: #ffd000e7;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+.chat-msg-text {
+    display: inline;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

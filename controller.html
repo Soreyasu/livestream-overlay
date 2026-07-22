@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Broadcast Controller</title>
+    <style>
+        body {
+            background-color: #18181b;
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-width: 400px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        h3 {
+            color: #00ffcc;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+            margin: 0 0 5px 0;
+            border-bottom: 1px solid #27272a;
+            padding-bottom: 3px;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #202024;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #2d2d34;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .toggle-group {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px 12px;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        label {
+            font-size: 11px;
+            color: #a0a0b0;
+            font-weight: 600;
+        }
+
+        input {
+            background: #09090b;
+            border: 1px solid #3f3f46;
+            color: white;
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #00ffcc;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+
+        button {
+            background: #27272a;
+            border: 1px solid #3f3f46;
+            color: white;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.15s ease;
+        }
+
+        button:hover {
+            border-color: #00ffcc;
+            background: #09090b;
+        }
+
+        .color-label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .color-label input {
+            margin-left: 10px;
+        }
+
+        #btn-update {
+            background: #00ffcc;
+            color: #121214;
+            border: none;
+        }
+
+        #btn-update:hover {
+            background: #00ccaa;
+        }
+
+        #btn-start {
+            border-color: #0ebe3a;
+        }
+
+        #btn-start:hover {
+            background: #0ebe3a;
+            color: #121214;
+        }
+
+        #btn-reset {
+            border-color: #ff4d4d;
+        }
+
+        #btn-reset:hover {
+            background: #ff4d4d;
+            color: white;
+        }
+
+        #btn-connect {
+            background: #9146FF;
+            border-color: #7C3AED;
+            color: white;
+        }
+
+        #btn-connect:hover {
+            background: #772CE8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Run Info Management -->
+    <div class="section">
+        <h3>Stream Info</h3>
+        <div class="input-group">
+            <label for="game-title-input">Game Title</label>
+            <!-- NEW TITLE COLOR PICKER -->
+            <label
+                style="font-size: 11px; font-weight: bold; color: #7e7b74; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                Color: <input type="color" id="ctrl-title-color" value="#ffbb00"
+                    style="padding: 0; border: none; width: 22px; height: 22px; background: none; cursor: pointer;">
+            </label>
+            <input type="text" id="game-title-input" placeholder="e.g., Metal Gear Solid V">
+            <!-- NEW FONT SIZE SLIDER -->
+            <label
+                style="display: flex; flex-direction: column; gap: 4px; color: #7e7b74; margin-top: 6px; font-weight: bold;">
+                Title Font Size
+                <input type="range" id="ctrl-title-font-size" min="20" max="80" value="40"
+                    style="width: 95%; cursor: pointer;">
+                <span id="title-font-size-value" style="font-size: 12px; color: #a0a0b0;">40px</span>
+            </label>
+        </div>
+        <div class="row">
+            <div class="input-group">
+                <label for="category-input">Category</label>
+                <input type="text" id="category-input" placeholder="e.g., Any% Glitchless">
+            </div>
+            <div class="input-group">
+                <label for="estimate-input">Time Estimate</label>
+                <input type="text" id="estimate-input" placeholder="e.g., 1:45:00">
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-group">
+                <label for="runner-input">Player Name</label>
+                <input type="text" id="runner-input" placeholder="Player">
+            </div>
+            <div class="input-group">
+                <label for="commentator-input">Commentators</label>
+                <input type="text" id="commentator-input" placeholder="Separate with commas">
+            </div>
+        </div>
+        <button id="btn-update">Apply Changes</button>
+    </div>
+
+    <!-- Timer Control -->
+    <div class="section">
+        <h3>Timer Control</h3>
+        <div class="input-group" style="margin-bottom: 8px;">
+            <label for="timer-manual-input">Manual Time Adjust</label>
+            <div class="row" style="gap: 8px;">
+                <input type="text" id="timer-manual-input" placeholder="e.g., 01:23:45 or 45:00" style="flex: 1;">
+                <button id="btn-set-timer"
+                    style="flex: 0 0 auto; background: #27272a; border-color: #00ffcc; color: #00ffcc;">Set</button>
+            </div>
+        </div>
+        <div class="btn-group">
+            <button id="btn-start">Start / Pause</button>
+            <button id="btn-reset">Reset</button>
+        </div>
+    </div>
+
+    <!-- Layout Options -->
+    <div class="section">
+        <h3>Layout Options</h3>
+        <div class="toggle-group">
+            <label class="toggle-item">
+                <input type="checkbox" id="timer-mode-toggle">
+                Use Speedrun Timer
+            </label>
+            <label class="toggle-item">
+                <input type="checkbox" id="speedrun-splits-toggle">
+                Show Speedrun Splits
+            </label>
+            <label class="toggle-item">
+                <input type="checkbox" id="personal-best-toggle">
+                Show Personal Best
+            </label>
+            <label class="toggle-item">
+                <input type="checkbox" id="rerun-label-toggle">
+                Show Rerun Label
+            </label>
+            <label class="toggle-item">
+                <input type="checkbox" id="black-label-text-toggle">
+                Use Auto Black Label Text
+            </label>
+            <label class="toggle-item">
+                <input type="checkbox" id="swap-camera-chat-toggle">
+                Swap Camera and Chat
+            </label>
+            <label class="toggle-item">
+                <input type="checkbox" id="camera-label-toggle">
+                Show Camera Label
+            </label>
+            <label class="toggle-item">
+                <input type="checkbox" id="chat-label-toggle">
+                Show Chat Label
+            </label>
+            <label class="toggle-item">
+                <input type="checkbox" id="camera-only-toggle">
+                Camera Only (No Chat)
+            </label>
+            <label class="toggle-item">
+                <input type="checkbox" id="chat-only-toggle">
+                Chat Only (No Camera)
+            </label>
+        </div>
+    </div>
+    <div class="section">
+        <h3>Speedrun Estimate</h3>
+        <div class="row" style="margin-top: 3px; gap: 3px;">
+            <div class="input-group" style="flex: 1;">
+                <label for="estimate-speedrun-input">Speedrun Estimate</label>
+                <input type="text" id="estimate-speedrun-input" placeholder="e.g., 1:45:00">
+            </div>
+        </div>
+        <div class="row" style="margin-top: 3px; gap: 3px;">
+            <div class="input-group" style="flex: 1;">
+                <label for="personal-best-input">Personal Best</label>
+                <input type="text" id="personal-best-input" placeholder="e.g., 1:38:42">
+            </div>
+        </div>
+    </div>
+
+    <!-- Twitch Configuration -->
+    <div class="section">
+        <h3>Twitch Connection</h3>
+        <div class="row" style="align-items: flex-end;">
+            <div class="input-group">
+                <input type="text" id="channel-input" placeholder="Enter Channel Name">
+            </div>
+            <button id="btn-connect" style="flex: 0 0 auto; padding: 6px 12px;">Connect</button>
+        </div>
+    </div>
+
+    <!-- Info Background Config -->
+    <div class="section">
+        <h3>Info Block Background</h3>
+        <div class="input-group" style="margin-bottom: 8px;">
+            <label for="info-bg-input">Image Path / URL</label>
+            <div class="row" style="gap: 8px;">
+                <input type="text" id="info-bg-input" placeholder="e.g., info-banners/1.jpg" style="flex: 1;">
+                <button id="btn-set-info-bg"
+                    style="flex: 0 0 auto; background: #27272a; border-color: #00ffcc; color: #00ffcc;">Set</button>
+            </div>
+        </div>
+        <div style="margin-top: 5px;">
+            <label style="display: block; margin-bottom: 4px;">Preview</label>
+            <!-- Preview Box -->
+            <div id="info-bg-preview"
+                style="width: 100%; height: 100px; background-color: #09090b; border: 1px solid #3f3f46; border-radius: 4px; background-size: cover; background-position: center;">
+            </div>
+        </div>
+        <!-- Opacity Slider -->
+        <div style="margin-top: 12px;">
+            <label style="display: flex; flex-direction: column; gap: 4px; font-weight: bold; color: #ffbb00;">
+                Image Opacity
+                <input type="range" id="info-bg-opacity-input" min="0" max="1" step="0.05" value="0.45"
+                    style="width: 95%; cursor: pointer;">
+                <span id="info-bg-opacity-value" style="font-size: 12px; color: #a0a0b0;">45%</span>
+            </label>
+        </div>
+        <!-- Edit Gradient -->
+        <div class="control-section"
+            style="margin-top: 20px; padding: 15px; border: 1px solid #3a3a4b; background: #0f0f12; color: #fff; border-radius: 6px;">
+            <h3 style="margin-top: 0; color: #ffbb00; font-size: 16px; text-transform: uppercase;">Info Block Gradient
+            </h3>
+
+            <div
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px; margin-bottom: 10px;">
+                <label class="color-label">Start Color: <input type="color" id="ctrl-info-gradient-start"
+                        value="#af881c"></label>
+                <label class="color-label">End Color: <input type="color" id="ctrl-info-gradient-end"
+                        value="#15151c"></label>
+            </div>
+
+            <label
+                style="display: flex; flex-direction: column; gap: 4px; font-weight: bold; color: #ffbb00; margin-top: 8px;">
+                Gradient Angle
+                <input type="range" id="ctrl-info-gradient-angle" min="0" max="360" value="180"
+                    style="width: 95%; cursor: pointer;">
+                <span id="info-gradient-angle-value" style="font-size: 12px; color: #a0a0b0;">180°</span>
+            </label>
+        </div>
+        <!-- Hide Image -->
+        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #3a3a4b;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; color: #fff;">
+                <input type="checkbox" id="info-bg-hide-toggle" style="transform: scale(1.2);">
+                Hide Background Image
+            </label>
+        </div>
+    </div>
+
+    <!-- DYNAMIC BORDER COLOR CONTROLLER -->
+    <div class="control-section"
+        style="margin-top: 20px; padding: 15px; border: 1px solid #3a3a4b; background: #0f0f12; color: #fff; border-radius: 6px;">
+        <h3 style="margin-top: 0; color: #ffbb00; font-size: 16px; text-transform: uppercase;">Border Color Changer</h3>
+
+        <div style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid #3a3a4b; font-weight: bold;">
+            <label style="color: #0ebe3a;">Master Control (All Borders):
+                <input type="color" id="ctrl-border-master" value="#ffbb00" style="margin-left: 10px; cursor: pointer;">
+            </label>
+        </div>
+
+        <!-- INDIVIDUAL COLOURS -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+            <label class="color-label">Game Feed: <input type="color" id="ctrl-border-game-feed"
+                    value="#ffbb00"></label>
+            <label id="label-cam-color" class="color-label">Camera Box: <input type="color" id="ctrl-border-cam"
+                    value="#0ebe3a"></label>
+            <label id="label-chat-color" class="color-label">Stream Chat: <input type="color" id="ctrl-border-chat"
+                    value="#0ebe3a"></label>
+            <label class="color-label">Info Block: <input type="color" id="ctrl-border-bottom-info"
+                    value="#3a3a4b"></label>
+            <label class="color-label">Timer Block: <input type="color" id="ctrl-border-bottom-timer"
+                    value="#ffbb00"></label>
+            <label class="color-label">Logo Block: <input type="color" id="ctrl-border-bottom-logo"
+                    value="#3a3a4b"></label>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 15px;">
+            <button id="apply-borders-btn"
+                style="flex: 1; padding: 8px; background: #00ffcc; color: #121214; border: none; cursor: pointer; font-weight: bold; border-radius: 4px;">
+                Apply Borders
+            </button>
+            <button id="reset-borders-btn"
+                style="flex: 1; padding: 8px; background: #8b5029; color: #fff; border: none; cursor: pointer; font-weight: bold; border-radius: 4px;">
+                Reset Borders
+            </button>
+        </div>
+    </div>
+
+    <div class="control-section"
+        style="margin-top: 20px; padding: 15px; border: 1px solid #3a3a4b; background: #0f0f12; color: #fff; border-radius: 6px;">
+        <h3 style="margin-top: 0; color: #ffbb00; font-size: 16px; text-transform: uppercase;">Background Color Changer
+        </h3>
+
+        <div style="margin-bottom: 15px; padding-bottom: 12px; border-bottom: 1px solid #3a3a4b; font-weight: bold;">
+            <label style="color: #ffbb00; display: flex; align-items: center; gap: 10px;">
+                Main Color
+                <input type="color" id="ctrl-background-color" value="#1e1e24" style="cursor: pointer;">
+            </label>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px; margin-bottom: 10px;">
+            <label class="color-label">Start Color: <input type="color" id="ctrl-background-start-color"
+                    value="#1e1e24"></label>
+            <label class="color-label">End Color: <input type="color" id="ctrl-background-end-color"
+                    value="#0f0f12"></label>
+        </div>
+
+        <div style="display: grid; gap: 8px; margin-top: 8px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                <input type="checkbox" id="ctrl-background-gradient">
+                Use Gradient Background
+            </label>
+            <label style="display: flex; flex-direction: column; gap: 4px; font-weight: bold; color: #ffbb00;">
+                Gradient Angle
+                <input type="range" id="ctrl-background-angle" min="0" max="360" value="135" style="width: 95%;">
+                <span id="background-angle-value" style="font-size: 12px; color: #a0a0b0;">135°</span>
+            </label>
+            <label style="display: flex; flex-direction: column; gap: 4px; font-weight: bold; color: #ffbb00;">
+                Start Position
+                <input type="range" id="ctrl-background-start-stop" min="0" max="100" value="0" style="width: 95%;">
+                <span id="background-start-stop-value" style="font-size: 12px; color: #a0a0b0;">0%</span>
+            </label>
+            <label style="display: flex; flex-direction: column; gap: 4px; font-weight: bold; color: #ffbb00;">
+                End Position
+                <input type="range" id="ctrl-background-end-stop" min="0" max="100" value="100" style="width: 95%;">
+                <span id="background-end-stop-value" style="font-size: 12px; color: #a0a0b0;">100%</span>
+            </label>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <button id="apply-background-btn"
+                style="flex: 1; padding: 8px; background: #00ffcc; color: #121214; border: none; cursor: pointer; font-weight: bold; border-radius: 4px;">
+                Apply Background
+            </button>
+            <button id="reset-background-btn"
+                style="flex: 1; padding: 8px; background: #8b5029; color: #fff; border: none; cursor: pointer; font-weight: bold; border-radius: 4px;">
+                Reset Background
+            </button>
+        </div>
+    </div>
+    <!-- Overlay Reset -->
+    <div class="section" style="border: 1px solid #ff4d4d; margin-top: 20px;">
+        <h3 style="color: #ff4d4d; border-bottom-color: #ff4d4d;">Overlay Reset</h3>
+        <p style="font-size: 11px; color: #a0a0b0; margin: 0 0 8px 0;">Warning: This will permanently erase all
+            saved text, colors, timers, and layout states across the controller and OBS.</p>
+        <button id="btn-hard-reset"
+            style="background: #27272a; border-color: #ff4d4d; color: #ff4d4d; width: 100%;">Clear All Cache &
+            Restart</button>
+    </div>
+
+    <script>
+        const gameTitleInput = document.getElementById('game-title-input');
+        const categoryInput = document.getElementById('category-input');
+        const estimateInput = document.getElementById('estimate-input');
+        const estimateSpeedrunInput = document.getElementById('estimate-speedrun-input');
+        const runnerInput = document.getElementById('runner-input');
+        const commentatorInput = document.getElementById('commentator-input');
+        const personalBestInput = document.getElementById('personal-best-input');
+        const updateBtn = document.getElementById('btn-update');
+
+        const startBtn = document.getElementById('btn-start');
+        const resetBtn = document.getElementById('btn-reset');
+        const timerModeToggle = document.getElementById('timer-mode-toggle');
+        const swapCameraChatToggle = document.getElementById('swap-camera-chat-toggle');
+        const rerunLabelToggle = document.getElementById('rerun-label-toggle');
+        const personalBestToggle = document.getElementById('personal-best-toggle');
+        const blackLabelTextToggle = document.getElementById('black-label-text-toggle');
+        const speedrunSplitsToggle = document.getElementById('speedrun-splits-toggle');
+        const cameraLabelToggle = document.getElementById('camera-label-toggle');
+        const chatLabelToggle = document.getElementById('chat-label-toggle');
+        const cameraOnlyToggle = document.getElementById('camera-only-toggle');
+        const chatOnlyToggle = document.getElementById('chat-only-toggle');
+        const connectBtn = document.getElementById('btn-connect');
+        const channelInput = document.getElementById('channel-input');
+        const backgroundColorInput = document.getElementById('ctrl-background-color');
+        const backgroundStartColorInput = document.getElementById('ctrl-background-start-color');
+        const backgroundEndColorInput = document.getElementById('ctrl-background-end-color');
+        const backgroundGradientToggle = document.getElementById('ctrl-background-gradient');
+        const backgroundAngleInput = document.getElementById('ctrl-background-angle');
+        const backgroundStartStopInput = document.getElementById('ctrl-background-start-stop');
+        const backgroundEndStopInput = document.getElementById('ctrl-background-end-stop');
+        const backgroundAngleValue = document.getElementById('background-angle-value');
+        const backgroundStartStopValue = document.getElementById('background-start-stop-value');
+        const backgroundEndStopValue = document.getElementById('background-end-stop-value');
+        const infoBgInput = document.getElementById('info-bg-input');
+        const infoBgPreview = document.getElementById('info-bg-preview');
+        const setInfoBgBtn = document.getElementById('btn-set-info-bg');
+        const infoBgOpacityInput = document.getElementById('info-bg-opacity-input');
+        const infoBgOpacityValue = document.getElementById('info-bg-opacity-value');
+        const infoBgHideToggle = document.getElementById('info-bg-hide-toggle');
+        const titleFontSizeInput = document.getElementById('ctrl-title-font-size');
+        const titleFontSizeValue = document.getElementById('title-font-size-value');
+        const titleColorInput = document.getElementById('ctrl-title-color');
+        const infoStartInput = document.getElementById('ctrl-info-gradient-start');
+        const infoEndInput = document.getElementById('ctrl-info-gradient-end');
+        const infoAngleInput = document.getElementById('ctrl-info-gradient-angle');
+        const infoAngleValue = document.getElementById('info-gradient-angle-value');
+
+        const colorMap = {
+            'ctrl-border-game-feed': ['--border-color-game-feed'],
+            'ctrl-border-cam': ['--border-color-cam', '--label-color-cam'],
+            'ctrl-border-chat': ['--border-color-chat', '--label-color-chat'],
+            'ctrl-border-bottom-info': ['--border-color-bottom-info'],
+            'ctrl-border-bottom-timer': ['--border-color-bottom-timer'],
+            'ctrl-border-bottom-logo': ['--border-color-bottom-logo']
+        };
+        const manualTimerInput = document.getElementById('timer-manual-input');
+        const setTimerBtn = document.getElementById('btn-set-timer');
+
+        let pendingBackgroundStyle = {
+            color: localStorage.getItem('overlay_background_color') || '#1e1e24',
+            startColor: localStorage.getItem('overlay_background_start_color') || '#1e1e24',
+            endColor: localStorage.getItem('overlay_background_end_color') || '#0f0f12',
+            gradient: localStorage.getItem('overlay_background_gradient') === 'true',
+            angle: parseInt(localStorage.getItem('overlay_background_angle') || '135', 10),
+            startStop: parseInt(localStorage.getItem('overlay_background_start_stop') || '0', 10),
+            endStop: parseInt(localStorage.getItem('overlay_background_end_stop') || '100', 10)
+        };
+        let pendingBorderColors = {};
+        const defaultBorderColors = {
+            'ctrl-border-game-feed': '#ffbb00',
+            'ctrl-border-cam': '#0ebe3a',
+            'ctrl-border-chat': '#0ebe3a',
+            'ctrl-border-bottom-info': '#3a3a4b',
+            'ctrl-border-bottom-timer': '#ffbb00',
+            'ctrl-border-bottom-logo': '#3a3a4b'
+        };
+
+        function loadSavedData() {
+            gameTitleInput.value = localStorage.getItem('info_game_title') || '';
+            categoryInput.value = localStorage.getItem('info_category') || '';
+            estimateInput.value = localStorage.getItem('info_estimate') || '';
+            estimateSpeedrunInput.value = localStorage.getItem('info_estimate_speedrun') || '';
+            runnerInput.value = localStorage.getItem('info_runner') || '';
+            commentatorInput.value = localStorage.getItem('info_commentators') || '';
+            personalBestInput.value = localStorage.getItem('info_personal_best') || '';
+            channelInput.value = localStorage.getItem('twitch_channel') || '';
+            swapCameraChatToggle.checked = localStorage.getItem('swap_camera_chat') === 'true';
+            rerunLabelToggle.checked = localStorage.getItem('show_rerun_label') === 'true';
+            document.getElementById('personal-best-toggle').checked = localStorage.getItem('show_personal_best') !== 'false';
+            blackLabelTextToggle.checked = localStorage.getItem('show_black_label_text') === 'true';
+            speedrunSplitsToggle.checked = localStorage.getItem('show_speedrun_splits') === 'true';
+            cameraLabelToggle.checked = localStorage.getItem('show_camera_label') !== 'false';
+            chatLabelToggle.checked = localStorage.getItem('show_chat_label') !== 'false';
+            cameraOnlyToggle.checked = localStorage.getItem('layout_camera_only') === 'true';
+            chatOnlyToggle.checked = localStorage.getItem('layout_chat_only') === 'true';
+            backgroundColorInput.value = pendingBackgroundStyle.color;
+            backgroundStartColorInput.value = pendingBackgroundStyle.startColor;
+            backgroundEndColorInput.value = pendingBackgroundStyle.endColor;
+            backgroundGradientToggle.checked = pendingBackgroundStyle.gradient;
+            backgroundAngleInput.value = pendingBackgroundStyle.angle;
+            backgroundStartStopInput.value = pendingBackgroundStyle.startStop;
+            backgroundEndStopInput.value = pendingBackgroundStyle.endStop;
+            manualTimerInput.value = localStorage.getItem('info_manual_timer') || '';
+            updateBackgroundValueLabels();
+
+            Object.keys(colorMap).forEach(id => {
+                const input = document.getElementById(id);
+                const savedColor = localStorage.getItem(`overlay_color_${colorMap[id][0]}`);
+                if (savedColor) {
+                    input.value = savedColor;
+                    pendingBorderColors[id] = savedColor;
+                }
+            });
+
+            updateColorLabel('label-cam-color', document.getElementById('ctrl-border-cam').value);
+            updateColorLabel('label-chat-color', document.getElementById('ctrl-border-chat').value);
+
+            timerModeToggle.checked = localStorage.getItem('timer_mode') === 'speedrun';
+
+            const savedInfoBg = localStorage.getItem('overlay_info_bg_image') || '';
+            infoBgInput.value = savedInfoBg;
+            updateBgPreview(savedInfoBg);
+            const savedInfoBgOpacity = localStorage.getItem('overlay_info_bg_opacity');
+            if (savedInfoBgOpacity !== null) {
+                infoBgOpacityInput.value = savedInfoBgOpacity;
+                infoBgOpacityValue.textContent = Math.round(savedInfoBgOpacity * 100) + '%';
+            }
+            infoBgHideToggle.checked = localStorage.getItem('overlay_info_bg_hidden') === 'true';
+            const savedTitleSize = localStorage.getItem('overlay_game_title_font_size');
+            if (savedTitleSize !== null) {
+                titleFontSizeInput.value = savedTitleSize;
+                titleFontSizeValue.textContent = savedTitleSize + 'px';
+            }
+            const savedTitleColor = localStorage.getItem('overlay_game_title_color');
+            if (savedTitleColor) {
+                titleColorInput.value = savedTitleColor;
+            }
+            infoStartInput.value = localStorage.getItem('overlay_info_block_start') || '#af881c';
+            infoEndInput.value = localStorage.getItem('overlay_info_block_end') || '#15151c';
+            const savedAngle = localStorage.getItem('overlay_info_block_angle') || '180';
+            infoAngleInput.value = savedAngle;
+            infoAngleValue.textContent = savedAngle + '°';
+        }
+
+        function updateBgPreview(url) {
+            if (url && url.trim() !== '') {
+                infoBgPreview.style.backgroundImage = `url('${url}')`;
+            } else {
+                // Show default preview or blank if empty
+                infoBgPreview.style.backgroundImage = `url('info-banners/2.jpg')`;
+            }
+        }
+
+        function triggerLiveUpdate() {
+            localStorage.setItem('info_update_trigger', 'update_' + Date.now());
+        }
+
+        function saveLayoutData() {
+            localStorage.setItem('info_game_title', gameTitleInput.value.trim() || '');
+            localStorage.setItem('info_category', categoryInput.value.trim() || '');
+            localStorage.setItem('info_estimate', estimateInput.value.trim() || '');
+            localStorage.setItem('info_estimate_speedrun', estimateSpeedrunInput.value.trim() || '');
+            localStorage.setItem('info_runner', runnerInput.value.trim() || '');
+            localStorage.setItem('info_commentators', commentatorInput.value.trim() || '');
+            localStorage.setItem('info_personal_best', personalBestInput.value.trim() || '');
+            triggerLiveUpdate();
+        }
+
+        function updateBorderColor(cssVars, value) {
+            cssVars.forEach(cssVar => {
+                localStorage.setItem(`overlay_color_${cssVar}`, value);
+            });
+        }
+
+        function commitBorderColors() {
+            Object.entries(colorMap).forEach(([id, cssVars]) => {
+                const input = document.getElementById(id);
+                pendingBorderColors[id] = input.value;
+                updateBorderColor(cssVars, input.value);
+            });
+            triggerLiveUpdate();
+        }
+
+        function updateColorLabel(labelId, value) {
+            const label = document.getElementById(labelId);
+            if (!label) return;
+            label.style.background = value;
+            label.style.color = (parseInt(value.slice(1), 16) > 0xffffff / 2) ? '#111' : '#fff';
+        }
+
+        function resetBorderColors() {
+            Object.keys(colorMap).forEach(id => {
+                const input = document.getElementById(id);
+                const defaultValue = defaultBorderColors[id] || '#ffffff';
+                input.value = defaultValue;
+                pendingBorderColors[id] = defaultValue;
+            });
+        }
+
+        timerModeToggle.addEventListener('change', () => {
+            localStorage.setItem('timer_mode', timerModeToggle.checked ? 'speedrun' : 'stream');
+            triggerLiveUpdate();
+        });
+
+        swapCameraChatToggle.addEventListener('change', () => {
+            localStorage.setItem('swap_camera_chat', swapCameraChatToggle.checked ? 'true' : 'false');
+            triggerLiveUpdate();
+        });
+
+        rerunLabelToggle.addEventListener('change', () => {
+            localStorage.setItem('show_rerun_label', rerunLabelToggle.checked ? 'true' : 'false');
+            triggerLiveUpdate();
+        });
+
+        personalBestToggle.addEventListener('change', () => {
+            localStorage.setItem('show_personal_best', personalBestToggle.checked ? 'true' : 'false');
+            triggerLiveUpdate();
+        });
+
+        function updateBackgroundValueLabels() {
+            if (backgroundAngleValue) backgroundAngleValue.textContent = `${backgroundAngleInput.value}°`;
+            if (backgroundStartStopValue) backgroundStartStopValue.textContent = `${backgroundStartStopInput.value}%`;
+            if (backgroundEndStopValue) backgroundEndStopValue.textContent = `${backgroundEndStopInput.value}%`;
+        }
+
+        function updateBackgroundStyle() {
+            pendingBackgroundStyle = {
+                color: backgroundColorInput.value,
+                startColor: backgroundStartColorInput.value,
+                endColor: backgroundEndColorInput.value,
+                gradient: backgroundGradientToggle.checked,
+                angle: parseInt(backgroundAngleInput.value, 10),
+                startStop: parseInt(backgroundStartStopInput.value, 10),
+                endStop: parseInt(backgroundEndStopInput.value, 10)
+            };
+            updateBackgroundValueLabels();
+        }
+
+        function applyPendingBackgroundStyle() {
+            localStorage.setItem('overlay_background_color', pendingBackgroundStyle.color);
+            localStorage.setItem('overlay_background_start_color', pendingBackgroundStyle.startColor);
+            localStorage.setItem('overlay_background_end_color', pendingBackgroundStyle.endColor);
+            localStorage.setItem('overlay_background_gradient', pendingBackgroundStyle.gradient ? 'true' : 'false');
+            localStorage.setItem('overlay_background_angle', String(pendingBackgroundStyle.angle));
+            localStorage.setItem('overlay_background_start_stop', String(pendingBackgroundStyle.startStop));
+            localStorage.setItem('overlay_background_end_stop', String(pendingBackgroundStyle.endStop));
+            triggerLiveUpdate();
+        }
+
+        function resetBackgroundStyle() {
+            pendingBackgroundStyle = {
+                color: '#1e1e24',
+                startColor: '#1e1e24',
+                endColor: '#0f0f12',
+                gradient: false,
+                angle: 135,
+                startStop: 0,
+                endStop: 100
+            };
+            backgroundColorInput.value = pendingBackgroundStyle.color;
+            backgroundStartColorInput.value = pendingBackgroundStyle.startColor;
+            backgroundEndColorInput.value = pendingBackgroundStyle.endColor;
+            backgroundGradientToggle.checked = pendingBackgroundStyle.gradient;
+            backgroundAngleInput.value = pendingBackgroundStyle.angle;
+            backgroundStartStopInput.value = pendingBackgroundStyle.startStop;
+            backgroundEndStopInput.value = pendingBackgroundStyle.endStop;
+            updateBackgroundValueLabels();
+        }
+
+        backgroundColorInput.addEventListener('input', updateBackgroundStyle);
+        backgroundStartColorInput.addEventListener('input', updateBackgroundStyle);
+        backgroundEndColorInput.addEventListener('input', updateBackgroundStyle);
+        backgroundGradientToggle.addEventListener('change', updateBackgroundStyle);
+        backgroundAngleInput.addEventListener('input', updateBackgroundStyle);
+        backgroundStartStopInput.addEventListener('input', updateBackgroundStyle);
+        backgroundEndStopInput.addEventListener('input', updateBackgroundStyle);
+        document.getElementById('reset-background-btn').addEventListener('click', resetBackgroundStyle);
+
+        blackLabelTextToggle.addEventListener('change', () => {
+            localStorage.setItem('show_black_label_text', blackLabelTextToggle.checked ? 'true' : 'false');
+            triggerLiveUpdate();
+        });
+
+        speedrunSplitsToggle.addEventListener('change', () => {
+            localStorage.setItem('show_speedrun_splits', speedrunSplitsToggle.checked ? 'true' : 'false');
+            triggerLiveUpdate();
+        });
+
+        cameraLabelToggle.addEventListener('change', () => {
+            localStorage.setItem('show_camera_label', cameraLabelToggle.checked ? 'true' : 'false');
+            triggerLiveUpdate();
+        });
+
+        chatLabelToggle.addEventListener('change', () => {
+            localStorage.setItem('show_chat_label', chatLabelToggle.checked ? 'true' : 'false');
+            triggerLiveUpdate();
+        });
+
+        function syncSidebarModeToggles() {
+            const cameraOnly = cameraOnlyToggle.checked;
+            const chatOnly = chatOnlyToggle.checked;
+            if (cameraOnly && chatOnly) {
+                chatOnlyToggle.checked = false;
+            }
+            localStorage.setItem('layout_camera_only', cameraOnly && !chatOnlyToggle.checked ? 'true' : 'false');
+            localStorage.setItem('layout_chat_only', chatOnly && !cameraOnlyToggle.checked ? 'true' : 'false');
+            triggerLiveUpdate();
+        }
+
+        cameraOnlyToggle.addEventListener('change', syncSidebarModeToggles);
+        chatOnlyToggle.addEventListener('change', syncSidebarModeToggles);
+
+        estimateSpeedrunInput.addEventListener('input', () => {
+            localStorage.setItem('info_estimate_speedrun', estimateSpeedrunInput.value.trim() || '');
+            triggerLiveUpdate();
+        });
+
+        personalBestInput.addEventListener('input', () => {
+            localStorage.setItem('info_personal_best', personalBestInput.value.trim() || '');
+            triggerLiveUpdate();
+        });
+
+        updateBtn.addEventListener('click', () => {
+            saveLayoutData();
+        });
+
+        startBtn.addEventListener('click', () => {
+            localStorage.setItem('timer_command', 'toggle_' + Date.now());
+        });
+
+        resetBtn.addEventListener('click', () => {
+            localStorage.setItem('timer_command', 'reset_' + Date.now());
+        });
+        setTimerBtn.addEventListener('click', () => {
+            const timeValue = manualTimerInput.value.trim();
+            if (!timeValue) return;
+
+            // Save the value to LocalStorage
+            localStorage.setItem('info_manual_timer', timeValue);
+
+            // Trigger command event for live overlay sync
+            localStorage.setItem('timer_command', 'set_' + timeValue + '_' + Date.now());
+            triggerLiveUpdate();
+        });
+
+        connectBtn.addEventListener('click', () => {
+            const channel = channelInput.value.trim().toLowerCase();
+            if (!channel) return;
+            localStorage.setItem('twitch_channel', channel);
+            localStorage.setItem('chat_command', 'connect_' + Date.now());
+        });
+
+        Object.entries(colorMap).forEach(([id, cssVars]) => {
+            const input = document.getElementById(id);
+            input.addEventListener('input', (event) => {
+                const value = event.target.value;
+                pendingBorderColors[id] = value;
+                if (id === 'ctrl-border-cam') updateColorLabel('label-cam-color', value);
+                if (id === 'ctrl-border-chat') updateColorLabel('label-chat-color', value);
+            });
+        });
+
+        const masterPicker = document.getElementById('ctrl-border-master');
+        masterPicker.addEventListener('input', (event) => {
+            const value = event.target.value;
+            Object.keys(colorMap).forEach(id => {
+                const input = document.getElementById(id);
+                input.value = value;
+                pendingBorderColors[id] = value;
+                if (id === 'ctrl-border-cam') updateColorLabel('label-cam-color', value);
+                if (id === 'ctrl-border-chat') updateColorLabel('label-chat-color', value);
+            });
+        });
+
+        document.getElementById('apply-borders-btn').addEventListener('click', commitBorderColors);
+        document.getElementById('reset-borders-btn').addEventListener('click', resetBorderColors);
+        document.getElementById('apply-background-btn').addEventListener('click', applyPendingBackgroundStyle);
+
+        window.addEventListener('DOMContentLoaded', loadSavedData);
+
+        // Helper function to smartly add .jpg if an extension is missing
+        function formatImagePath(path) {
+            let cleanPath = path.trim();
+            if (!cleanPath) return '';
+            // If the path doesn't end with a common image extension, add .jpg
+            if (!/\.(jpg|jpeg|png|gif|webp)$/i.test(cleanPath) && !cleanPath.startsWith('http')) {
+                cleanPath += '.jpg';
+            }
+            return cleanPath;
+        }
+
+        // Updates the preview box in real-time as you type or paste a link
+        infoBgInput.addEventListener('input', (event) => {
+            const smartUrl = formatImagePath(event.target.value);
+            updateBgPreview(smartUrl);
+        });
+
+        // Saves the image to storage and triggers the OBS update
+        setInfoBgBtn.addEventListener('click', () => {
+            const smartUrl = formatImagePath(infoBgInput.value);
+            localStorage.setItem('overlay_info_bg_image', smartUrl);
+            triggerLiveUpdate();
+        });
+        infoBgOpacityInput.addEventListener('input', (event) => {
+            const val = event.target.value;
+            // Update the visual text percentage (e.g., 0.45 becomes "45%")
+            infoBgOpacityValue.textContent = Math.round(val * 100) + '%';
+
+            // Save and send to overlay
+            localStorage.setItem('overlay_info_bg_opacity', val);
+            triggerLiveUpdate();
+        });
+        infoBgHideToggle.addEventListener('change', (event) => {
+            localStorage.setItem('overlay_info_bg_hidden', event.target.checked ? 'true' : 'false');
+            triggerLiveUpdate();
+        });
+        titleFontSizeInput.addEventListener('input', (event) => {
+            const val = event.target.value;
+            titleFontSizeValue.textContent = val + 'px';
+
+            localStorage.setItem('overlay_game_title_font_size', val);
+            triggerLiveUpdate();
+        });
+        titleColorInput.addEventListener('input', (event) => {
+            localStorage.setItem('overlay_game_title_color', event.target.value);
+            triggerLiveUpdate();
+        });
+        infoStartInput.addEventListener('input', (e) => {
+            localStorage.setItem('overlay_info_block_start', e.target.value);
+            triggerLiveUpdate();
+        });
+
+        infoEndInput.addEventListener('input', (e) => {
+            localStorage.setItem('overlay_info_block_end', e.target.value);
+            triggerLiveUpdate();
+        });
+
+        infoAngleInput.addEventListener('input', (e) => {
+            const val = e.target.value;
+            infoAngleValue.textContent = val + '°';
+            localStorage.setItem('overlay_info_block_angle', val);
+            triggerLiveUpdate();
+        });
+        // ==========================================
+        // HARD RESET SYSTEM
+        // ==========================================
+        document.getElementById('btn-hard-reset').addEventListener('click', () => {
+            const confirmReset = confirm("WARNING: This will wipe all saved colors, text, and timer history. Are you sure you want to factory reset everything?");
+
+            if (confirmReset) {
+                // 1. Wipe the computer's local storage completely
+                localStorage.clear();
+
+                // 2. Trigger the OBS browser source to refresh itself instantly
+                localStorage.setItem('force_hard_reset', Date.now().toString());
+
+                // 3. Refresh the controller page itself
+                window.location.reload();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

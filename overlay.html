@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Amigos Showtime Stream Overlay</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="overlay-container">
+        <!-- Game Window (Leave empty for OBS layout alignment) -->
+        <div class="module game-feed">
+            <span class="rerun-label" id="rerun-label" style="display: none;">Rerun</span>
+        </div>
+
+        <!-- Camera/Chat Window -->
+        <div class="module sidebar-camera" id="sidebar-camera">
+            <span class="cam-label" id="camera-label">Live Camera</span>
+        </div>
+        <div class="module sidebar-chat" id="sidebar-chat">
+            <span class="chat-label" id="chat-label">Stream Chat</span>
+            <div class="chat-messages-holder" id="chat-messages-holder"></div>
+            <div class="chat-disabled-message" id="chat-disabled-message"><!-- Enter text here if you want to --></div>
+        </div>
+
+        <!-- Bottom Informational Bar Group -->
+
+        <div class="bottom-bar">
+    <div class="module info-block">
+        <div class="game-title" id="display-game-title">Waiting for Controller...</div>
+        <div class="game-meta">Category: <span id="display-category">-</span> | Player: <span id="display-runner">-</span></div>
+        <div class="game-comments">Commentators || Collaborators: <span id="display-commentators">-</span></div>
+       
+    </div>
+    
+    <div class="module timer-block">
+        <div class="timer-label" id="timer-label">Current Game Time</div>
+        <div class="timer-digits">
+            <span id="time-main">00:00:00</span>
+        </div>
+        <div class="timer-estimate">EST: <span id="display-estimate">0:00:00</span></div>
+        <div class="timer-estimate" id="personal-best-row">PB: <span id="display-personal-best">--:--:--</span></div>
+        <div class="timer-local-time">Local Time: <span id="display-local-time">--:-- --</span></div>
+    </div>
+    
+    <div class="module logo-block">
+        <img src="logo.png" alt="Stream Logo" class="stream-logo">
+    </div>
+</div>
+
+<!--SPEEDRUN AREA, UNCOMMENT IF NEEDED-->
+        <!--<div class="bottom-bar">
+            <div class="module info-block">
+                <div class="game-title">Metal Gear Solid V: The Phantom Pain</div>
+                
+                <div class="game-meta">Category: <span class="game-category">Any% Glitchless</span> | Player: <span
+                        class="game-runner">Amigo_Streamer</span></div>
+                
+                <div class="game-comments">Commentators: <span class="commentator-names">Amigo_Streamer,
+                        Another_Commentator</span></div>
+            </div>
+
+            <div class="module clock">
+                <div class="clock-label">Current Time</div>
+                <div class="clock-digits">12:34 PM</div>  (need to program a clock in js)
+            </div>
+
+            <div class="module timer-block">
+                <div class="timer-label">Current Run Time</div>
+                <div class="timer-digits">01:24:45</div> 
+                <div class="timer-estimate">Est: 1:45:00</div>
+            </div>
+
+           
+            <div class="module ticker-block">
+                <div class="ticker-title">Total Donations</div>
+                <div class="ticker-value">$12,345.67</div>
+            </div>
+            
+            <div class="module logo-block">
+                <img src="logo.png" alt="Logo" class="stream-logo">
+            </div>
+
+        </div>-->
+    </div>
+<script src="app.js"></script>
+</body>
+
+</html>
