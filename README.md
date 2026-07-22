@@ -40,3 +40,4 @@ That's it! Enjoy!
   - Chat emotes in the chatbox *(with options for FFZ & 7TV)*
   - More customization options!
     
+this is a open source project.
