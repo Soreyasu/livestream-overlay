@@ -2,8 +2,8 @@
 ***I really need to clean up the code, i apologize for the messy structure***
 
 This page is currently under development for the following livestream services:
-  - Twitch
-  - Youtube
+  - Twitch (Current project)
+  - Youtube (Upcoming)
   - (Potentially other services)
 
 
@@ -39,4 +39,8 @@ That's it! Enjoy!
   - A youtube version
   - Chat emotes in the chatbox *(with options for FFZ & 7TV)*
   - More customization options!
+
+
+
+Don't forget this is an open source project, feel free to fork and create your own thing, but don't forget to credit where credit is due.
     
