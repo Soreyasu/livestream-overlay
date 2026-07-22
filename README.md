@@ -15,7 +15,7 @@ This page is currently under development for the following livestream services:
 
   - Controller.html
     - in OBS navigate to Docks > Custom browser docks
-    - there you will give the dock a name and under URL *(e.g.: C:\<your path>\livestream-overlay\overlay.html)*
+    - there you will give the dock a name and under URL you will put the path to the controller *(e.g.: C:\<your path>\livestream-overlay\controller.html)*
     - you might need to right click the dock and press refresh if it does not seem to load correctly.
 
 That's it! Enjoy!
