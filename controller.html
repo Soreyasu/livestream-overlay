@@ -165,7 +165,7 @@
 
 <body>
 
-    <!-- Run Info Management -->
+    <!-- STREAM INFO MANAGER -->
     <div class="section">
         <h3>Stream Info</h3>
         <div class="input-group">
@@ -177,6 +177,24 @@
                     style="padding: 0; border: none; width: 22px; height: 22px; background: none; cursor: pointer;">
             </label>
             <input type="text" id="game-title-input" placeholder="e.g., Metal Gear Solid V">
+            <!-- NEW GLOBAL FONT CHOOSER -->
+            <label
+                style="display: flex; flex-direction: column; gap: 4px; color: #7e7b74; margin-top: 12px; font-weight: bold;">
+                Global Font Family
+                <select id="ctrl-font-family"
+                    style="background: #09090b; border: 1px solid #3f3f46; color: white; padding: 6px; border-radius: 4px; font-size: 13px; cursor: pointer;">
+                    <option value="'Gotham', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Default (Gotham/Segoe UI)
+                    </option>
+                    <option value="Arial, Helvetica, sans-serif">Arial</option>
+                    <option value="'Courier New', Courier, monospace">Courier New (Typewriter)</option>
+                    <option value="'Verdana', Geneva, sans-serif">Verdana (Wide/Clean)</option>
+                    <option
+                        value="'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif">
+                        Trebuchet MS</option>
+                    <option value="'Times New Roman', Times, serif">Times New Roman (Classic)</option>
+                    <option value="'Comic Sans MS', 'Comic Sans', cursive">Comic Sans (For the memes)</option>
+                </select>
+            </label>
             <!-- NEW FONT SIZE SLIDER -->
             <label
                 style="display: flex; flex-direction: column; gap: 4px; color: #7e7b74; margin-top: 6px; font-weight: bold;">
@@ -211,18 +229,26 @@
 
     <!-- Timer Control -->
     <div class="section">
-        <h3>Timer Control</h3>
-        <div class="input-group" style="margin-bottom: 8px;">
-            <label for="timer-manual-input">Manual Time Adjust</label>
-            <div class="row" style="gap: 8px;">
-                <input type="text" id="timer-manual-input" placeholder="e.g., 01:23:45 or 45:00" style="flex: 1;">
-                <button id="btn-set-timer"
-                    style="flex: 0 0 auto; background: #27272a; border-color: #00ffcc; color: #00ffcc;">Set</button>
+        <div
+            style="display: block; justify-content: space-between; align-items: center; border-bottom: 1px solid #27272a; padding-bottom: 3px; margin-bottom: 5px;">
+            <h3 style="margin: 0; border: none; padding: 0;">Timer Control</h3>
+            <label
+                style="font-size: 11px; font-weight: bold; color: #7e7b74; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                Color: <input type="color" id="ctrl-timer-color" value="#ffbb00"
+                    style="padding: 0; border: none; width: 18px; height: 18px; background: none; cursor: pointer;">
+            </label>
+            <div class="input-group" style="margin-bottom: 8px;">
+                <label for="timer-manual-input">Manual Time Adjust</label>
+                <div class="row" style="gap: 8px;">
+                    <input type="text" id="timer-manual-input" placeholder="e.g., 01:23:45 or 45:00" style="flex: 1;">
+                    <button id="btn-set-timer"
+                        style="flex: 0 0 auto; background: #27272a; border-color: #00ffcc; color: #00ffcc;">Set</button>
+                </div>
             </div>
-        </div>
-        <div class="btn-group">
-            <button id="btn-start">Start / Pause</button>
-            <button id="btn-reset">Reset</button>
+            <div class="btn-group">
+                <button id="btn-start">Start / Pause</button>
+                <button id="btn-reset">Reset</button>
+            </div>
         </div>
     </div>
 
@@ -505,6 +531,8 @@
         const infoEndInput = document.getElementById('ctrl-info-gradient-end');
         const infoAngleInput = document.getElementById('ctrl-info-gradient-angle');
         const infoAngleValue = document.getElementById('info-gradient-angle-value');
+        const timerColorInput = document.getElementById('ctrl-timer-color');
+        const fontFamilySelect = document.getElementById('ctrl-font-family');
 
         const colorMap = {
             'ctrl-border-game-feed': ['--border-color-game-feed'],
@@ -563,6 +591,11 @@
             backgroundEndStopInput.value = pendingBackgroundStyle.endStop;
             manualTimerInput.value = localStorage.getItem('info_manual_timer') || '';
             updateBackgroundValueLabels();
+            const savedFont = localStorage.getItem('overlay_font_family');
+            if (savedFont) {
+                fontFamilySelect.value = savedFont;
+            }
+
 
             Object.keys(colorMap).forEach(id => {
                 const input = document.getElementById(id);
@@ -577,6 +610,11 @@
             updateColorLabel('label-chat-color', document.getElementById('ctrl-border-chat').value);
 
             timerModeToggle.checked = localStorage.getItem('timer_mode') === 'speedrun';
+
+            const savedTimerColor = localStorage.getItem('overlay_color_--timer-color');
+            if (savedTimerColor) {
+                timerColorInput.value = savedTimerColor;
+            }
 
             const savedInfoBg = localStorage.getItem('overlay_info_bg_image') || '';
             infoBgInput.value = savedInfoBg;
@@ -900,6 +938,14 @@
             const val = e.target.value;
             infoAngleValue.textContent = val + '°';
             localStorage.setItem('overlay_info_block_angle', val);
+            triggerLiveUpdate();
+        });
+        timerColorInput.addEventListener('input', (event) => {
+            localStorage.setItem('overlay_color_--timer-color', event.target.value);
+            triggerLiveUpdate();
+        });
+        fontFamilySelect.addEventListener('change', (event) => {
+            localStorage.setItem('overlay_font_family', event.target.value);
             triggerLiveUpdate();
         });
         // ==========================================
