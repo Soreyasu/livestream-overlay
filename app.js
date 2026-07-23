@@ -450,6 +450,20 @@ function loadLiveLayoutData() {
     } else {
         document.documentElement.style.removeProperty('--game-title-color');
     }
+    // DYNAMIC TIMER COLOR
+    const timerColor = localStorage.getItem('overlay_color_--timer-color');
+    if (timerColor) {
+        document.documentElement.style.setProperty('--timer-color', timerColor);
+    } else {
+        document.documentElement.style.removeProperty('--timer-color');
+    }
+    // DYNAMIC GLOBAL FONT FAMILY
+    const fontFamily = localStorage.getItem('overlay_font_family');
+    if (fontFamily) {
+        document.documentElement.style.setProperty('--main-font-family', fontFamily);
+    } else {
+        document.documentElement.style.removeProperty('--main-font-family');
+    }
     // DYNAMIC INFO BLOCK GRADIENT
     const infoStart = localStorage.getItem('overlay_info_block_start');
     const infoEnd = localStorage.getItem('overlay_info_block_end');

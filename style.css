@@ -32,14 +32,17 @@
 }
 
 body {
+    
     width: 1920px;
     height: 1080px;
     background-color: transparent;
-    font-family: 'Gotham', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* NEW: Uses dynamic variable, falls back to your original default */
+    font-family: var(--main-font-family, 'Gotham', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
     color: var(--body-color);
     overflow: hidden;
     zoom: 100%;
 }
+
 
 .overlay-container {
     display: grid;
@@ -260,7 +263,7 @@ body {
     font-size: 54px;
     font-weight: bold;
     color: var(--timer-color);
-    text-shadow: 0 0 10px rgba(255, 187, 0, 0.4);
+    text-shadow: 0 0 10px color-mix(in srgb, var(--timer-color) 40%, transparent);
     font-variant-numeric: tabular-nums;
     font-family: 'Courier New', Courier, monospace;
 }
