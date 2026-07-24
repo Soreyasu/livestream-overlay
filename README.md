@@ -24,16 +24,18 @@ That's it! Enjoy!
 
 ## What can i do with this overlay?
   - This overlay is highly customizable and has alot of functions:
-    - to change the colors of the overlay background, borders and labels *(via a docked controller in OBS)*
-    - to use gradients for backgrounds
+    - to change the colors of the overlay background, borders and labels *(via a docked controller in OBS)*.
+    - to use a color or a gradient for background.
     - to load in an image behind the information box *(via path url)*
-    - to create a gradient behind the image
+    - to create a gradient behind the image in the information box
     - a clock timer that is adjustable to your needs
     - a speedrun mode!
     - to swap the chat box and the camera box position
     - to only select a camera or a chatbox
-    - to change the logo (placeholder is amigos showtime)
-    - a connection to your twitch page
+    - to change the logo (placeholder is amigos showtime) ***(to change the logo, just replace the logo.png with your own file named logo.png)***
+    - a connection to your twitch page to load the chat.
+    - to save and load your custom theme *(this option is only on OBS itself, you can not save the settings locally on your pc)*
+    - to select a font to use over the whole ui except the timer
     - to reset all the cache in case something is going wrong with your overlay!
    
 
