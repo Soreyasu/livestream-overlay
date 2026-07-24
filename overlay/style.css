@@ -148,7 +148,10 @@ body {
 }
 
 .info-block::before {
-    background: var(--info-bg-image, url('info-banners/2.jpg')) center/cover no-repeat;
+    background-image: var(--info-bg-image, url('../images/hollowk.jpg'));
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
     opacity: var(--info-bg-opacity, 0.45);
 }
 .info-block.hide-bg::before {
@@ -236,7 +239,7 @@ body {
 
 .game-comments,
 .game-meta {
-    font-size: 20px;
+    font-size: 22px;
     color: var(--game-comments-color);
     margin-top: 5px;
 }
@@ -253,14 +256,15 @@ body {
 }
 
 .timer-label {
-    font-size: 20px;
+    font-size: 22px;
     color: var(--timer-title-color);
     text-transform: uppercase;
     margin-bottom: 2px;
+    font-weight: 400;
 }
 
 .timer-digits {
-    font-size: 54px;
+    font-size: 60px;
     font-weight: bold;
     color: var(--timer-color);
     text-shadow: 0 0 10px color-mix(in srgb, var(--timer-color) 40%, transparent);
@@ -270,15 +274,16 @@ body {
 
 .timer-estimate,
 .timer-local-time {
-    font-size: 20px;
+    font-size: 22px;
     color: var(--timer-estimate-color);
     text-transform: uppercase;
     margin-top: 2px;
+    font-weight: 400;
 }
 
 .timer-local-time {
     display: flex;
-    gap: 8px;
+    gap: 6px;
 }
 
 /* Donation / Incentive Ticker 
