@@ -84,7 +84,7 @@ function setTimerFromTimeString(timeString) {
 // 2. TWITCH CHAT LOGIC
 // ==========================================
 const CHAT_HISTORY_LIMIT = 20;
-const ALLOWED_EDITORS = ['soreyasu', 'dretda', 'saarion'];
+const ALLOWED_EDITORS = ['soreyasu', 'dretda', 'saarion', 'ilovecooies','snowysushi'];
 // NEW: Hardcode your ignored bots/users here (must be lowercase)
 const IGNORED_USERS = ['nightbot', 'streamelements', 'fossabot', 'moobot','pokemoncommunitygame'];
 const TWITCH_SERVER = 'wss://irc-ws.chat.twitch.tv:443';
@@ -149,6 +149,9 @@ function handleTwitchMessage(data) {
     appendChatMessage(rawUsername, escapeHtml(rawMessage));
 }
 
+// ==========================================
+// 2.1 TWITCH REMOTE COMMAND HANDLER
+// ==========================================
 function handleRemoteCommand(message) {
     const commandMap = {
         '!setgame ': 'info_game_title',
@@ -418,10 +421,20 @@ function loadLiveLayoutData() {
     });
     // DYNAMIC INFO BLOCK BACKGROUND IMAGE
     const infoBgUrl = localStorage.getItem('overlay_info_bg_image');
+    let dynamicStyle = document.getElementById('dynamic-bg-style');
+    
+    // Create a dedicated style tag if it doesn't exist yet
+    if (!dynamicStyle) {
+        dynamicStyle = document.createElement('style');
+        dynamicStyle.id = 'dynamic-bg-style';
+        document.head.appendChild(dynamicStyle);
+    }
+
+    // Inject the CSS directly into the HTML to bypass folder relativity
     if (infoBgUrl && infoBgUrl.trim() !== '') {
-        document.documentElement.style.setProperty('--info-bg-image', `url('${infoBgUrl}')`);
+        dynamicStyle.textContent = `.info-block::before { background-image: url('${infoBgUrl}'); }`;
     } else {
-        document.documentElement.style.removeProperty('--info-bg-image');
+        dynamicStyle.textContent = ''; 
     }
     // DYNAMIC INFO BLOCK BACKGROUND OPACITY
     const infoBgOpacity = localStorage.getItem('overlay_info_bg_opacity');
